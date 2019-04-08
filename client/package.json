@@ -3,11 +3,11 @@
 	"description": "Client side of the extension.",
 	"author": "ThomdabeasT",
 	"license": "MIT",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"publisher": "ThomdabeasT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/thomdabeast/java-checkstyle"
+		"url": "https://github.com/thomdabeast/java-checkstyle-vscode"
 	},
 	"engines": {
 		"vscode": "^1.23.0"
