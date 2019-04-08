@@ -1,0 +1,70 @@
+{
+	"name": "java-checkstyle",
+	"displayName": "Java Checkstyle",
+	"description": "Run any version of checkstyle for Java.",
+	"version": "0.0.1",
+	"keywords": [
+		"java checkstyle check"
+	],
+	"engines": {
+		"vscode": "^1.33.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:java"
+	],
+	"main": "./client/src/extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.check",
+				"title": "Run Java Checkstyle"
+			},
+			{
+				"command": "extension.toggle.check",
+				"title": "Toggle Java Checkstyle"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Java Checkstyle Configuration",
+			"properties": {
+				"java.checkstyle.enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "Controls whether checkstyle is enabled or not."
+				},
+				"java.checkstyle.version": {
+					"scope": "resource",
+					"type": "string",
+					"description": "The checkstyle version to use."
+				},
+				"java.checkstyle.properties": {
+					"scope": "resource",
+					"type": "object",
+					"default": {},
+					"description": "Java system properties your checkstyle file needs."
+				},
+				"java.checkstyle.configuration": {
+					"scope": "resource",
+					"type": "string",
+					"default": "",
+					"description": "The checkstyle file configuration to use."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+		"test": "exit 1"
+	},
+	"devDependencies": {
+		"vscode": "^1.1.28",
+		"eslint": "^5.13.0",
+		"@types/node": "^10.12.21",
+		"@types/mocha": "^2.2.42"
+	}
+}
