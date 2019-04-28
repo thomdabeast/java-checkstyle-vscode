@@ -2,15 +2,22 @@
 
 A checkstyle extension for Java.
 
+## Donations
+
+Donations are very much appreciated! It will help support the life and health of this project(also the developer needs coffee).
+
+[patreon](https://www.patreon.com/thomhemenway) | [paypal](https://paypal.me/pools/c/8ehVmR9sav)
+
 ## Coming soon
 
-1. Fix suggestion windows.
-2. Auto-linting.
+1. Use of *workspaceDir* in config.
+2. Grab checkstyle version from `build.gradle`
+2. "Fix suggestion" windows.
+3. Auto-linting.
 
 ## Features
 
-* Configurable checkstyle version
-* Configurable Java system properties
+* Automatically downloads the checkstyle version you need.
 
 ## Requirements
 
@@ -25,11 +32,13 @@ None at the moment.
 
 ## Known Issues
 
-* Checkstyle will run before downloading the checkstyle version causing errors.
+* Checkstyle will run before downloading the checkstyle version causing error logs.
 
 ## Release Notes
 
-I'll get there. Don't worry.
+### 1.0.2
+
+Adding donation links.
 
 ### 1.0.1
 
