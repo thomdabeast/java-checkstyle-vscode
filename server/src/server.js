@@ -78,14 +78,15 @@ connection.onDidChangeConfiguration(change => {
 				checkstyleConfiguration = checkstylePath;
 
 				getCheckstyleJar(checkstyleVersion);
+				// Revalidate all open text documents
+				documents.all().forEach(doc => validateDocument(doc.uri));
 			});
 		});
 	} else {
 		getCheckstyleJar(checkstyleVersion);
+		// Revalidate all open text documents
+		documents.all().forEach(doc => validateDocument(doc.uri));
 	}
-
-	// Revalidate all open text documents
-	documents.all().forEach(doc => validateDocument(doc.uri));
 });
 
 function parseOutput(output) {
