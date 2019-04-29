@@ -1,5 +1,6 @@
 const path = require('path');
 const vscode = require('vscode');
+
 const {
 	LanguageClient,
 	TransportKind,
@@ -41,6 +42,10 @@ function activate(context) {
 		serverOptions,
 		clientOptions
 	);
+
+	client.onReady().then(() => {
+		client.sendRequest('storagePath', context.globalStoragePath);
+	});
 
 	context.subscriptions.push(new SettingMonitor(client, 'java.checkstyle.enabled').start());	
 }

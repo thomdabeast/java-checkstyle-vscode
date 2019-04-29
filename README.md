@@ -10,14 +10,14 @@ Donations are very much appreciated! It will help support the life and health of
 
 ## Coming soon
 
-1. Use of *workspaceDir* in config.
-2. Grab checkstyle version from `build.gradle`
+1. Grab checkstyle version from `build.gradle`
 2. "Fix suggestion" windows.
 3. Auto-linting.
 
 ## Features
 
 * Automatically downloads the checkstyle version you need.
+* Ability to use `${workspaceFolder}` in configs.
 
 ## Requirements
 
@@ -26,15 +26,24 @@ None at the moment.
 ## Extension Settings
 
 * `java.checkstyle.version`: The version of checkstyle you want to use.
+  * Default: `8.16`
 * `java.checkstyle.enabled`: Enable auto-checking of files.
+  * Default: `true`
 * `java.checkstyle.properties`: Java system properties that you will be using inside of your checkstyle configuration file.
+  * Default: `null`
 * `java.checkstyle.configuration`: Java checkstyle configuration file.
+  * Default: [Google Checkstyle](https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml)
 
 ## Known Issues
 
-* Checkstyle will run before downloading the checkstyle version causing error logs.
+null
 
 ## Release Notes
+
+### 1.1.0
+
+* Ability to use `${workspaceFolder}` in configs
+* If no checkstyle configuration file is defined, Google checkstyle will be used.
 
 ### 1.0.2
 

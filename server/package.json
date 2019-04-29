@@ -12,6 +12,7 @@
 		"url": "https://github.com/thomdabeast/java-checkstyle"
 	},
 	"dependencies": {
+		"uuid": "^3.3.2",
 		"vscode-languageserver": "^4.1.3"
 	},
 	"scripts": {},

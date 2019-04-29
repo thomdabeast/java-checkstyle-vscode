@@ -25,6 +25,14 @@ let documents = new TextDocuments();
 documents.listen(connection);
 
 connection.onInitialize((params) => {
+	connection.onRequest('storagePath', (path) => {
+		storagePath = path;
+
+		if (!fs.existsSync(storagePath)) {
+			fs.mkdirSync(storagePath, { recursive: true });
+		}
+	});
+
 	return {
 		capabilities: {
 			// Tell the client that the server works in FULL text document sync mode
@@ -34,8 +42,10 @@ connection.onInitialize((params) => {
 				resolveProvider: true
 			}
 		}
-}
+	}
 });
+
+let storagePath;
 
 let checkstyleVersion;
 let checkstyleProperties;
@@ -43,10 +53,36 @@ let checkstyleConfiguration;
 
 connection.onDidChangeConfiguration(change => {
 	checkstyleConfiguration = change.settings.java.checkstyle.configuration || '';
+	checkstyleConfiguration = checkstyleConfiguration.replace('${workspaceFolder}', fs.realpathSync('.'));
 	checkstyleVersion = change.settings.java.checkstyle.version || '8.16'; //TODO: Add google checkstyle file.
 	checkstyleProperties = change.settings.java.checkstyle.properties || null;
+	Object.keys(checkstyleProperties).forEach((key) => {
+		checkstyleProperties[key] = checkstyleProperties[key].replace('${workspaceFolder}', fs.realpathSync('.'));
+	});
 
-	getCheckstyleJar(checkstyleVersion);
+	if (checkstyleConfiguration === '') {
+		https.get('https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml', (res) => {
+			var googleCheckstyle = [];
+
+			res.on('data', (chunk) => googleCheckstyle.push(chunk));
+
+			res.on('end', () => {
+				const checkstylePath = `${storagePath}/checkstyle.xml`;
+
+				try {
+					fs.writeFileSync(checkstylePath, Buffer.concat(googleCheckstyle), { mode: 0o775 });
+				} catch(e) {
+					connection.console.error(`Unable to open ${checkstylePath}`);
+				}
+
+				checkstyleConfiguration = checkstylePath;
+
+				getCheckstyleJar(checkstyleVersion);
+			});
+		});
+	} else {
+		getCheckstyleJar(checkstyleVersion);
+	}
 
 	// Revalidate all open text documents
 	documents.all().forEach(doc => validateDocument(doc.uri));
@@ -83,8 +119,8 @@ function parseOutput(output) {
 
 function validateDocument(uri) {
 	let fsPath = Files.uriToFilePath(uri);
-	if (!fsPath) {
-		// checkstyle can only lint files on disk
+	if (!fsPath || !storagePath) {
+		// checkstyle can only lint files on disk, save temp file
 		return;
 	}
 
@@ -116,7 +152,7 @@ function getCmdAndArgs(extraArgs) {
 		systemProperties = Object.keys(checkstyleProperties).map(key => `-D${key}=${checkstyleProperties[key]}`).join(' ');
 	}
 
-	return `java ${systemProperties} -jar ${createJarName(checkstyleVersion)} ${extraArgs.join(' ')}`;
+	return `java ${systemProperties} -jar ${createJarName(checkstyleVersion).replace(/\s/g, '\\ ')} ${extraArgs.map(arg => arg.replace(/\s/g, '\\ ')).join(' ')}`;
 }
 
 /**
@@ -132,6 +168,9 @@ function getCheckstyleArguments(file) {
 }
 
 function getCheckstyleJar(version) {
+	// Wait until it's defined
+	if (!storagePath) return;
+
 	const filePath = createJarName(version);
 
 	if(!fs.existsSync(filePath)) {
@@ -166,7 +205,7 @@ function getCheckstyleJar(version) {
 }
 
 function createJarName(version) {
-	return `${os.tmpdir()}/checkstyle-${version}.jar`;
+	return `${storagePath}/checkstyle-${version}.jar`;
 }
 
 // This handler provides the initial list of the completion items.
